@@ -13,5 +13,6 @@
 + (NSData *)convertImageToPDF:(UIImage *)image;
 + (NSData *)convertImageToPDF:(UIImage *)image withDPI:(CGFloat)dpi;
 + (NSData *)convertImageToPDF:(UIImage *)image withDPI:(CGFloat)dpi andMaxSize:(CGSize)maxSize;
++ (NSData *)convertArrayOfImagesToPDF:(NSArray *)theImages withDPI:(CGFloat)dpi;
 
 @end
