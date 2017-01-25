@@ -52,4 +52,32 @@ static CGFloat const kDefaultDPI = 72;
 
     return pdfFile;
 }
+
+////////////////////////////////////
++(NSData*)convertArrayOfImagesToPDF: (NSArray*)theImages withDPI: (CGFloat)DPI {
+    if (DPI < = 0) {
+        return nil;
+    }
+    
+    CGSize pageSize = CGSizeMake(612, 792);
+    NSMutableData *pdfFile = [[NSMutableData alloc] init];
+    CGDataConsumerRef pdfConsumer = CGDataConsumerCreateWithCFData((CFMutableDataRef)pdfFile);
+    CGRect mediaBox = CGRectMake(0, 0, pageSize.width, pageSize.height);
+    CGContextRef pdfContext = CGPDFContextCreate(pdfConsumer, &mediaBox, NULL);
+    
+    for (int i=0; i < theImages.count; i++) {
+        double maxScale = sx > sy ? sx : sy;
+        imageWidth = imageWidth / maxScale;
+        imageHeight = imageHeight / maxScale;
+        // Put the image in the top left corner of the bounding rectangle
+        CGRect imageBox = CGRectMake(0, 0 + pageSize.height - imageHeight, imageWidth, imageHeight);
+        UIImage* image = [theImages objectAtIndex: i];
+        CGContextBeginPage(pdfContext, &mediaBox);
+        CGContextDrawImage(pdfContext, imageBox, [image CGImage]);
+        CGContextEndPage(pdfContext);
+    }
+    CGContextRelease(pdfContext);
+    CGDataConsumerRelease(pdfConsumer);
+    return pdfFile;
+}
 @end
