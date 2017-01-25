@@ -51,7 +51,7 @@
     
 	NSMutableArray *theImages = [NSMutableArray array];
 	
-	id blobs = [args objectAtIndex:kArgBlob];
+	NSArray* blobs = [args objectAtIndex:kArgBlob];
 	for (int i=0; i < blobs.count; i++) {
 		id blob = [blobs objectAtIndex:i];
 		ENSURE_TYPE(blob,TiBlob);
