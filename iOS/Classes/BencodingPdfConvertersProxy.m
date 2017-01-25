@@ -39,4 +39,34 @@
     return result;
 }
 
+-(NSArray*) convertArrayOfImagesToPDF : (id)args
+{
+	enum Args {
+		kArgBlob = 0,
+        	kArgCount,
+        	kArgResolution = kArgCount
+	};
+    
+	ENSURE_ARG_COUNT(args, kArgCount);
+    
+	NSMutableArray *theImages = [NSMutableArray array];
+	
+	id blobs = [args objectAtIndex:kArgBlob];
+	for (int i=0; i < blobs.count; i++) {
+		id blob = [blobs objectAtIndex:i];
+		ENSURE_TYPE(blob,TiBlob);
+		UIImage* image = [(TiBlob*)blob image];
+		[theImages addObject:image];
+	}
+	
+	int resolution = [TiUtils intValue:[args objectAtIndex:kArgResolution] def:96];
+    
+	CGSize pageSize = CGSizeMake(612, 792);
+	CGRect imageBoundsRect = CGRectMake(50, 50, 512, 692);
+
+	NSData *pdfData = [PDFImageConverter convertArrayOfImagesToPDF:theImages withDPI:resolution];
+
+	TiBlob *result = [[TiBlob alloc] initWithData:pdfData mimetype:@"application/octet-stream"];
+	return result;
+}
 @end
