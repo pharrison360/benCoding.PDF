@@ -54,8 +54,8 @@ static CGFloat const kDefaultDPI = 72;
 }
 
 ////////////////////////////////////
-+(NSData*)convertArrayOfImagesToPDF: (NSArray*)theImages withDPI: (CGFloat)DPI {
-    if (DPI < = 0) {
++ (NSData *)convertArrayOfImagesToPDF:(NSArray *)theImages withDPI:(CGFloat)DPI {
+    if (DPI <= 0) {
         return nil;
     }
     
@@ -66,13 +66,18 @@ static CGFloat const kDefaultDPI = 72;
     CGContextRef pdfContext = CGPDFContextCreate(pdfConsumer, &mediaBox, NULL);
     
     for (int i=0; i < theImages.count; i++) {
+        UIImage* image = [theImages objectAtIndex: i];
+
+        CGFloat imageWidth = image.size.width*image.scale*kDefaultDPI/DPI;
+        CGFloat imageHeight = image.size.height*image.scale*kDefaultDPI/DPI;
+        CGFloat sx = imageWidth/pageSize.width;
+        CGFloat sy = imageHeight/pageSize.height;
+        
         double maxScale = sx > sy ? sx : sy;
         imageWidth = imageWidth / maxScale;
         imageHeight = imageHeight / maxScale;
         // Put the image in the top left corner of the bounding rectangle
-        CGRect imageBox = CGRectMake(0, 0 + pageSize.height - imageHeight, imageWidth, imageHeight);
-        UIImage* image = [theImages objectAtIndex: i];
-        CGContextBeginPage(pdfContext, &mediaBox);
+        CGRect imageBox = CGRectMake(0, 0 + pageSize.height - imageHeight, imageWidth, imageHeight);        CGContextBeginPage(pdfContext, &mediaBox);
         CGContextDrawImage(pdfContext, imageBox, [image CGImage]);
         CGContextEndPage(pdfContext);
     }
